@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-data class User(
+class User(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
@@ -15,18 +15,27 @@ data class User(
         val username: String,
 
         //@JsonIgnore
-        val password: String,
+        val password: String
 
-        @ManyToMany
-        @JoinTable(
-                name = "user_favorites",
-                joinColumns = [JoinColumn(name = "user_id")],
-                inverseJoinColumns = [JoinColumn(name = "pet_id")])
-        @JsonIgnoreProperties("likes")
-        val favoritePets: Set<Pet> = HashSet(),
+) {
+    @OneToMany(
+            mappedBy = "owner")
+    @JsonIgnore
+    val pets: Set<Pet> = HashSet()
 
-        @OneToMany(
-                mappedBy = "owner")
-        @JsonIgnore
-        val pets: Set<Pet> = HashSet()
-)
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = [JoinColumn(name = "user_id")],
+            inverseJoinColumns = [JoinColumn(name = "pet_id")])
+    @JsonIgnoreProperties("likes")
+    var favoritePets: MutableSet<Pet> = HashSet()
+
+    fun likePet(pet: Pet) {
+        favoritePets.add(pet)
+    }
+
+    fun unlikePet(pet: Pet) {
+        favoritePets.remove(pet)
+    }
+}

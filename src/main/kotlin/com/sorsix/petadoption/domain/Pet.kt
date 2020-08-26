@@ -1,21 +1,23 @@
 package com.sorsix.petadoption.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "pets")
-class Pet(
+data class Pet(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long,
 
         val type: String,
 
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         val owner: User,
 
-        @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+        @OneToOne(cascade = [CascadeType.ALL])
         @JoinColumn(name = "contact_id", referencedColumnName = "id")
         val contact: Contact,
 
@@ -35,11 +37,7 @@ class Pet(
         val behaviour: String,
 
         @Lob
-        val image: String,
-
-        @ManyToMany(mappedBy = "favoritePets")
-        @JsonIgnoreProperties("favoritePets")
-        val likes: Set<User> = HashSet(),
+        val image: String?,
 
         val weight: Double,
 
@@ -47,5 +45,19 @@ class Pet(
 
         val allergies: String,
 
-        val vaccination: String
-)
+        val vaccination: String,
+
+        @JsonIgnore
+        val timestamp: LocalDateTime
+) {
+    @ManyToMany(mappedBy = "favoritePets")
+    @JsonIgnoreProperties("favoritePets")
+    val likes: MutableSet<User> = HashSet()
+
+    fun like(user: User){
+        likes.add(user)
+    }
+    fun unlike(user: User){
+        likes.remove(user)
+    }
+}
