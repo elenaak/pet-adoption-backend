@@ -36,7 +36,7 @@ class PetService(val petRepository: PetRepository,
             base64Image = java.lang.String.format("data:%s;base64,%s", image.contentType,
                     Base64.getEncoder().encodeToString(bytes))
         }
-        val user = userRepository.findById(1).orElseThrow()
+        val user = userRepository.findById("username").orElseThrow()
         val pet = Pet(0, type, user, contact, firstName, breed, color, age, sex, description, behaviour, base64Image,
                 weight, height, allergies, vaccination, LocalDateTime.now())
     }

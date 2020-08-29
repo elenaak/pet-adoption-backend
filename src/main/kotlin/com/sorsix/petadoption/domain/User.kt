@@ -7,15 +7,19 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "users")
-class User(
+data class User(
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val id: Long,
-
         val username: String,
 
         //@JsonIgnore
-        val password: String
+        val password: String,
+
+        @ManyToOne
+        val userRole: UserRole,
+
+        val email: String,
+
+        val active: Boolean = true
 
 ) {
     @OneToMany(

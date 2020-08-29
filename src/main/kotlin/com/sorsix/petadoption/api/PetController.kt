@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/pets")
+@RequestMapping("/api/pets")
 class PetController(val petSearchService: PetSearchByFiltersService,
                     val petService: PetService) {
 
