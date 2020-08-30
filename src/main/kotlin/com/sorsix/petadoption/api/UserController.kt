@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.api
 
+import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.UserDetails
 import com.sorsix.petadoption.service.AuthService
 import org.springframework.web.bind.annotation.*
@@ -9,8 +10,8 @@ import org.springframework.web.bind.annotation.*
 class UserController(val authService: AuthService) {
 
     @PostMapping("/signup")
-    fun signUp(@RequestBody signUpRequest: SignUpRequest) {
-        authService.registerUser(signUpRequest)
+    fun signUp(@RequestBody signUpRequest: SignUpRequest): User {
+        return authService.registerUser(signUpRequest)
     }
 
     @GetMapping

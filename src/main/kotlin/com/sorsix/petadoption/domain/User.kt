@@ -35,11 +35,11 @@ data class User(
     @JsonIgnoreProperties("likes")
     var favoritePets: MutableSet<Pet> = HashSet()
 
-    fun likePet(pet: Pet) {
+    fun addToFavourite(pet: Pet) {
         favoritePets.add(pet)
     }
 
-    fun unlikePet(pet: Pet) {
+    fun deleteFromFavourite(pet: Pet) {
         favoritePets.remove(pet)
     }
 }
