@@ -5,7 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserDetails(private val user: User) : UserDetails {
-    
+
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val authority = SimpleGrantedAuthority(user.userRole.name)
         val list: MutableList<GrantedAuthority> = ArrayList()
@@ -22,7 +22,7 @@ class UserDetails(private val user: User) : UserDetails {
     }
 
     override fun isCredentialsNonExpired(): Boolean {
-        return user.active
+        return true
     }
 
     override fun getPassword(): String {
@@ -30,10 +30,10 @@ class UserDetails(private val user: User) : UserDetails {
     }
 
     override fun isAccountNonExpired(): Boolean {
-        return user.active
+        return true
     }
 
     override fun isAccountNonLocked(): Boolean {
-        return user.active
+        return true
     }
 }

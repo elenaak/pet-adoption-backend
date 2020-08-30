@@ -30,6 +30,7 @@ dependencies {
     }
     testImplementation("org.springframework.security:spring-security-test")
     implementation("com.auth0:java-jwt:3.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
 }
 
 tasks.withType<Test> {

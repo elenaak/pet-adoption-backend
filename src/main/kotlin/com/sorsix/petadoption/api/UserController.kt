@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/authenticate")
 class UserController(val authService: AuthService) {
 
-    @PostMapping("/sign-up")
-    fun signUp(@RequestBody username: String, @RequestBody password: String, @RequestBody email: String) {
-        authService.registerUser(username, password, email)
+    @PostMapping("/signup")
+    fun signUp(@RequestBody signUpRequest: SignUpRequest) {
+        authService.registerUser(signUpRequest)
     }
 
     @GetMapping

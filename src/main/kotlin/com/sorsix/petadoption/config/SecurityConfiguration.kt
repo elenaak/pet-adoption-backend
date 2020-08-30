@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -20,7 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfiguration(val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter() {
+class SecurityConfiguration(private val userDetailsService: UserDetailsService) : WebSecurityConfigurerAdapter() {
 
     @Bean
     fun passwordEncoder(): BCryptPasswordEncoder {
@@ -28,12 +29,11 @@ class SecurityConfiguration(val userDetailsService: UserDetailsService) : WebSec
     }
 
     override fun configure(web: WebSecurity) {
-        web.ignoring().antMatchers("/authenticate/sign-up")
+        web.ignoring().antMatchers("/authenticate/signup")
     }
 
     override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/authenticate/sign-up","/authenticate").permitAll()
                 .antMatchers("/css/**", "/js/**", "/logout").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/pets", "/api/pets/*").permitAll()
                 .anyRequest().authenticated()

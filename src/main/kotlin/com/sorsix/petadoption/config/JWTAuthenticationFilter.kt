@@ -2,12 +2,13 @@ package com.sorsix.petadoption.config
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.sorsix.petadoption.domain.exception.PasswordsNotTheSameException
 import com.sorsix.petadoption.domain.exception.UserNotFoundException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -28,7 +29,7 @@ class JWTAuthenticationFilter(
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         try {
-            val creds = ObjectMapper().readValue(request.inputStream, AuthenticationRequest::class.java)
+            val creds = jacksonObjectMapper().readValue(request.inputStream, AccountCredentials::class.java)
             val user: UserDetails
             try {
                 user = userDetailsService.loadUserByUsername(creds.username)
@@ -39,8 +40,8 @@ class JWTAuthenticationFilter(
             }
             return authenticationMng.authenticate(
                     UsernamePasswordAuthenticationToken(
-                            user.username,
-                            user.password,
+                            creds.username,
+                            creds.password,
                             user.authorities
                     )
             )
@@ -53,8 +54,9 @@ class JWTAuthenticationFilter(
         return authenticationMng
     }
 
-    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain, authResult: Authentication?) {
-        val userDetails: UserDetails = authResult?.principal as UserDetails
+    override fun successfulAuthentication(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain,
+                                          authResult: Authentication) {
+        val userDetails: UserDetails = authResult.principal as UserDetails
         val token: String = JWT.create()
                 .withSubject(userDetails.username)
                 .withExpiresAt(Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
@@ -62,6 +64,5 @@ class JWTAuthenticationFilter(
         response.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token)
         response.writer.append(token)
     }
-
 
 }

@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.service
 
+import com.sorsix.petadoption.api.SignUpRequest
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.RoleNotFoundException
 import com.sorsix.petadoption.repository.UserRepository
@@ -19,10 +20,8 @@ class UserDetailsService(private val userRepository: UserRepository,
         }
     }
 
-    fun register(username: String, password: String, email: String) {
+    fun register(username: String,password:String,email:String) {
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
-        userRepository.save(User(username, password, role, email))
+        userRepository.save(User(username,password,role,email))
     }
-
-
 }
