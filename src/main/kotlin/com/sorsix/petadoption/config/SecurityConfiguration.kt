@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -33,6 +32,7 @@ class SecurityConfiguration(private val userDetailsService: UserDetailsService) 
     }
 
     override fun configure(http: HttpSecurity) {
+        http.exceptionHandling().authenticationEntryPoint(UnauthorizedAuthenticationEntryPoint())
         http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/logout").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/pets", "/api/pets/*").permitAll()

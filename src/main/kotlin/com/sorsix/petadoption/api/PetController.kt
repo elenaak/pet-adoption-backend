@@ -21,6 +21,8 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     @GetMapping("/search")
     fun searchPets(name: String?, type: String?, breed: String?, age: Int?,
                    sex: Sex?, color: String?, page: Int?, size: Int?): Page<Pet> {
+//        if(page!=null)
+//             return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page-1, size)
         return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page, size)
     }
 
