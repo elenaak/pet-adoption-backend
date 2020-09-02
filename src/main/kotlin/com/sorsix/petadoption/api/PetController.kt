@@ -2,12 +2,17 @@ package com.sorsix.petadoption.api
 
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.Sex
+import com.sorsix.petadoption.domain.exception.InvalidPetIdException
+import com.sorsix.petadoption.domain.exception.InvalidUserIdException
+import com.sorsix.petadoption.domain.exception.UnauthorizedException
 import com.sorsix.petadoption.service.PetSearchByFiltersService
 import com.sorsix.petadoption.service.PetService
 import org.springframework.data.domain.Page
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+@CrossOrigin(origins = arrayOf("http://localhost:4200"))
 @RestController
 @RequestMapping("/api/pets")
 class PetController(val petSearchService: PetSearchByFiltersService,
@@ -38,5 +43,36 @@ class PetController(val petSearchService: PetSearchByFiltersService,
         return petService.deletePet(id).map { res ->
             ResponseEntity.ok(res)
         }.orElse(ResponseEntity.notFound().build())
+    }
+
+    @PostMapping("/create")
+    fun createPet(@RequestBody request: CreatePetRequest): Pet {
+        return with(request) {
+            petService.createPet(type, name, breed, color, age, sex, description, behaviour, image, weight, height,
+                    allergies, vaccines, contact.email, contact.firstName, contact.lastName, contact.address, contact.city,
+                    contact.telephone)
+        }
+    }
+
+    @PostMapping("/edit/{id}")
+    fun editPet(@PathVariable id: Long, @RequestBody r: CreatePetRequest): Pet {
+        return petService.editPet(id,r.type, r.name, r.breed, r.color, r.age, r.sex, r.description, r.behaviour, r.image,
+                r.weight, r.height, r.allergies, r.vaccines, r.contact.email, r.contact.firstName, r.contact.lastName,
+                r.contact.address, r.contact.city, r.contact.telephone)
+    }
+
+    @ExceptionHandler(InvalidPetIdException::class)
+    fun petIdNotExistsHandler(e: InvalidPetIdException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Pet id not found"))
+    }
+
+    @ExceptionHandler(InvalidUserIdException::class)
+    fun usernameNotExistsHandler(e: InvalidUserIdException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Username not found"))
+    }
+
+    @ExceptionHandler(UnauthorizedException::class)
+    fun unauthorizedExceptionHandler(e:UnauthorizedException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "You are not allowed"))
     }
 }

@@ -14,6 +14,6 @@ class UnauthorizedAuthenticationEntryPoint : BasicAuthenticationEntryPoint() {
 
     @Throws(IOException::class, ServletException::class,PasswordsNotTheSameException::class,UserNotFoundException::class)
     override fun commence(request: HttpServletRequest, response: HttpServletResponse, authException: AuthenticationException) {
-        response.sendError(401,"Invalid username or password")
+        response.sendError(400,"Invalid username or password")
     }
 }
