@@ -17,7 +17,7 @@ data class Pet(
         @ManyToOne(fetch = FetchType.LAZY)
         val owner: User,
 
-        @OneToOne(cascade = [CascadeType.ALL])
+        @OneToOne(cascade = [CascadeType.ALL],orphanRemoval = true)
         @JoinColumn(name = "contact_id", referencedColumnName = "id")
         val contact: Contact,
 
@@ -27,11 +27,13 @@ data class Pet(
 
         val color: String,
 
-        val age: Int,
+        @Enumerated(EnumType.STRING)
+        val age: Age,
 
         @Enumerated(EnumType.STRING)
         val sex: Sex,
 
+        @Lob
         val description: String,
 
         val behaviour: String,
@@ -51,7 +53,7 @@ data class Pet(
         val timestamp: LocalDateTime
 ) {
     @ManyToMany(mappedBy = "favoritePets")
-    @JsonIgnoreProperties("favoritePets")
+    @JsonIgnore()
     val likes: MutableSet<User> = HashSet()
 
     fun like(user: User){

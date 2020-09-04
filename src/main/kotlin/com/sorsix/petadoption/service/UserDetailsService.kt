@@ -13,7 +13,8 @@ import javax.annotation.PostConstruct
 
 @Service
 class UserDetailsService(private val userRepository: UserRepository,
-                         private val roleRepository: UserRoleRepository) : UserDetailsService {
+                         private val roleRepository: UserRoleRepository,
+                         private val emailService: EmailService) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): com.sorsix.petadoption.domain.UserDetails {
         val user = userRepository.findById(username)
@@ -24,14 +25,16 @@ class UserDetailsService(private val userRepository: UserRepository,
 
     fun register(username: String, password: String, email: String): User {
         if (userRepository.existsById(username))
-           throw UsernameAlreadyExists(username)
+            throw UsernameAlreadyExists(username)
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
-        return userRepository.save(User(username, password, role, email))
+        val user = userRepository.save(User(username, password, role, email))
+        emailService.sendWelcomeEmail(user)
+        return user
     }
 
     @PostConstruct
-    fun init(){
-        if(!roleRepository.existsById("ROLE_USER"))
+    fun init() {
+        if (!roleRepository.existsById("ROLE_USER"))
             roleRepository.save(UserRole("ROLE_USER"))
     }
 }

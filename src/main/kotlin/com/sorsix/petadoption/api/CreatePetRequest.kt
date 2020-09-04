@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.api
 
+import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Contact
 import com.sorsix.petadoption.domain.Sex
 
@@ -9,7 +10,7 @@ data class CreatePetRequest(
         val name: String,
         val breed: String,
         val color: String,
-        val age: Int,
+        val age: Age,
         val sex: Sex,
         val description: String,
         val behaviour: String,

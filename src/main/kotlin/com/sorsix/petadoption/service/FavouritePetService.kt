@@ -34,4 +34,9 @@ class FavouritePetService(val authService: AuthService,
         pet.unlike(user)
     }
 
+    fun getLikedPets(): Set<Pet> {
+        val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow { throw InvalidUserIdException() }
+        return user.favoritePets
+    }
+
 }

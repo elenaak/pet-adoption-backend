@@ -32,7 +32,7 @@ data class User(
             name = "user_favorites",
             joinColumns = [JoinColumn(name = "user_id")],
             inverseJoinColumns = [JoinColumn(name = "pet_id")])
-    @JsonIgnoreProperties("likes")
+    @JsonIgnore()
     var favoritePets: MutableSet<Pet> = HashSet()
 
     fun addToFavourite(pet: Pet) {

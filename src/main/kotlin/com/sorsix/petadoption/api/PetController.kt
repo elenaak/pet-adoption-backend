@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.api
 
+import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.Sex
 import com.sorsix.petadoption.domain.exception.InvalidPetIdException
@@ -24,7 +25,7 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     }
 
     @GetMapping("/search")
-    fun searchPets(name: String?, type: String?, breed: String?, age: Int?,
+    fun searchPets(name: String?, type: String?, breed: String?, age: Age?,
                    sex: Sex?, color: String?, page: Int?, size: Int?): Page<Pet> {
 //        if(page!=null)
 //             return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page-1, size)

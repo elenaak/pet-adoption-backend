@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.service
 
+import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.Sex
 import com.sorsix.petadoption.domain.exception.InvalidPetIdException
@@ -27,7 +28,7 @@ class PetService(val petRepository: PetRepository,
         return petRepository.findAllByOrderByTimestampDesc(pageable)
     }
 
-    fun createPet(type: String, name: String, breed: String, color: String, age: Int, sex: Sex,
+    fun createPet(type: String, name: String, breed: String, color: String, age: Age, sex: Sex,
                   description: String, behaviour: String, image64Base: String?, weight: Double, height: Double,
                   allergies: String, vaccination: String,
                   email: String, firstName: String, lastName: String, address: String, city: String,
@@ -49,7 +50,7 @@ class PetService(val petRepository: PetRepository,
         return petRepository.findById(id)
     }
 
-    fun editPet(id: Long, type: String, name: String, breed: String, color: String, age: Int, sex: Sex,
+    fun editPet(id: Long, type: String, name: String, breed: String, color: String, age: Age, sex: Sex,
                 description: String, behaviour: String, image64Base: String?, weight: Double, height: Double,
                 allergies: String, vaccination: String,
                 email: String, firstName: String, lastName: String, address: String, city: String,
