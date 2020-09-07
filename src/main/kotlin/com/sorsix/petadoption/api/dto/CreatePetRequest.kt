@@ -1,4 +1,4 @@
-package com.sorsix.petadoption.api
+package com.sorsix.petadoption.api.dto
 
 import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Contact

@@ -17,7 +17,9 @@ data class User(
         @ManyToOne
         val userRole: UserRole,
 
-        val email: String,
+        var email: String,
+
+        var description: String?,
 
         val active: Boolean = true
 
@@ -25,7 +27,7 @@ data class User(
     @OneToMany(
             mappedBy = "owner")
     @JsonIgnore
-    val pets: Set<Pet> = HashSet()
+    val pets: MutableSet<Pet> = HashSet()
 
     @ManyToMany
     @JoinTable(

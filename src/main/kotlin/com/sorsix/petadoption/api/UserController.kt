@@ -1,25 +1,40 @@
 package com.sorsix.petadoption.api
 
+import com.sorsix.petadoption.api.dto.EditUserRequest
+import com.sorsix.petadoption.api.dto.SignUpRequest
+import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
-import com.sorsix.petadoption.domain.UserDetails
+import com.sorsix.petadoption.domain.exception.InvalidUserIdException
 import com.sorsix.petadoption.domain.exception.UsernameAlreadyExists
 import com.sorsix.petadoption.service.AuthService
+import com.sorsix.petadoption.service.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @CrossOrigin
-@RequestMapping("/authenticate")
-class UserController(val authService: AuthService) {
+@RequestMapping
+class UserController(val authService: AuthService, val userService: UserService) {
 
-    @PostMapping("/signup")
+    @PostMapping("/authenticate/signup")
     fun signUp(@RequestBody signUpRequest: SignUpRequest): User {
         return authService.registerUser(signUpRequest)
     }
 
-    @GetMapping
-    fun getCurrentUser(): UserDetails {
-        return authService.getCurrentUser()
+    @PostMapping("edit/profile")
+    fun editUser(@RequestBody request: EditUserRequest) {
+        return userService.editUser(request.email, request.description)
+    }
+
+    @GetMapping("/authenticate")
+    fun getCurrentUser(): User {
+        return userService.getUserById(authService.getCurrentUserId())
+    }
+
+    @GetMapping("/api/my-pets")
+    fun getPetsByUser(): Set<Pet> {
+        return userService.getPetsByUser()
     }
 
     @ExceptionHandler(UsernameAlreadyExists::class)
@@ -27,4 +42,8 @@ class UserController(val authService: AuthService) {
         return ResponseEntity.badRequest().body(mapOf("error" to e.toString()))
     }
 
+    @ExceptionHandler(InvalidUserIdException::class)
+    fun usernameNotExistsHandler(e: InvalidUserIdException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Username not found"))
+    }
 }

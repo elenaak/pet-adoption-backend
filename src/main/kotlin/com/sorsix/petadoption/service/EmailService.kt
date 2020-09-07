@@ -6,6 +6,7 @@ import com.sorsix.petadoption.domain.User
 import org.springframework.core.io.FileSystemResource
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.io.File
 import javax.mail.internet.InternetAddress
@@ -13,6 +14,7 @@ import javax.mail.internet.InternetAddress
 @Service
 class EmailService(val mailSender: JavaMailSender) {
 
+    @Async
     fun sendEmail(pet: Pet, receiver: Contact, adopter: User) {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
@@ -35,6 +37,7 @@ class EmailService(val mailSender: JavaMailSender) {
         return message.toString()
     }
 
+    @Async
     fun sendWelcomeEmail(receiver:User){
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)

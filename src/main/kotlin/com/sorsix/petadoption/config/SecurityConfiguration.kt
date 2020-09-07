@@ -47,11 +47,26 @@ class SecurityConfiguration(private val userDetailsService: UserDetailsService) 
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
     }
 
+
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+        val config = CorsConfiguration().applyPermitDefaultValues()
+        config.addAllowedOrigin("*")
+        config.addAllowedHeader("*")
+        config.addExposedHeader("WWW-Authenticate")
+        config.addExposedHeader("Access-Control-Allow-Origin")
+        config.addExposedHeader("Access-Control-Allow-Headers")
+        config.addAllowedMethod("OPTIONS")
+        config.addAllowedMethod("HEAD")
+        config.addAllowedMethod("GET")
+        config.addAllowedMethod("PUT")
+        config.addAllowedMethod("POST")
+        config.addAllowedMethod("DELETE")
+        config.addAllowedMethod("PATCH")
+        source.registerCorsConfiguration("/**", config)
         return source
     }
+
 
 }

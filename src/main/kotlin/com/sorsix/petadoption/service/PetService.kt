@@ -3,6 +3,7 @@ package com.sorsix.petadoption.service
 import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.Sex
+import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidPetIdException
 import com.sorsix.petadoption.domain.exception.InvalidUserIdException
 import com.sorsix.petadoption.domain.exception.UnauthorizedException
@@ -13,7 +14,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.*
 
 @Service
 class PetService(val petRepository: PetRepository,
@@ -39,15 +39,22 @@ class PetService(val petRepository: PetRepository,
                 behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now()))
     }
 
-    fun deletePet(id: Long): Optional<Unit> {
-        return if (petRepository.existsById(id))
-            Optional.of(petRepository.deleteById(id))
-        else
-            Optional.empty()
+    fun deletePet(id: Long) {
+        return this.petRepository.findById(id).map {
+            val user = userRepository.findById(authService.getCurrentUserId())
+                    .orElseThrow { throw InvalidUserIdException() }
+            if (user.username != it.owner.username)
+                throw UnauthorizedException()
+            for (u: User in userRepository.findAll()) {
+                u.deleteFromFavourite(it)
+                u.pets.remove(it)
+            }
+            petRepository.delete(it)
+        }.orElseThrow { throw InvalidPetIdException() }
     }
 
-    fun getPetById(id: Long): Optional<Pet> {
-        return petRepository.findById(id)
+    fun getPetById(id: Long): Pet {
+        return petRepository.findById(id).orElseThrow { throw InvalidPetIdException() }
     }
 
     fun editPet(id: Long, type: String, name: String, breed: String, color: String, age: Age, sex: Sex,

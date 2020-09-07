@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.api
 
+import com.sorsix.petadoption.api.dto.CreatePetRequest
 import com.sorsix.petadoption.domain.Age
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.Sex
@@ -13,7 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
-@CrossOrigin(origins = arrayOf("http://localhost:4200"))
+
 @RestController
 @RequestMapping("/api/pets")
 class PetController(val petSearchService: PetSearchByFiltersService,
@@ -33,17 +34,13 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     }
 
     @GetMapping("/{id}")
-    fun getPetById(@PathVariable id: Long): ResponseEntity<Pet> {
-        return petService.getPetById(id).map { pet ->
-            ResponseEntity.ok(pet)
-        }.orElse(ResponseEntity.notFound().build())
+    fun getPetById(@PathVariable id: Long): Pet {
+        return petService.getPetById(id)
     }
 
     @DeleteMapping("/{id}")
-    fun deletePet(@PathVariable id: Long): ResponseEntity<Unit> {
-        return petService.deletePet(id).map { res ->
-            ResponseEntity.ok(res)
-        }.orElse(ResponseEntity.notFound().build())
+    fun deletePet(@PathVariable id: Long){
+        return petService.deletePet(id)
     }
 
     @PostMapping("/create")
@@ -55,7 +52,7 @@ class PetController(val petSearchService: PetSearchByFiltersService,
         }
     }
 
-    @PostMapping("/edit/{id}")
+    @PutMapping("/edit/{id}")
     fun editPet(@PathVariable id: Long, @RequestBody r: CreatePetRequest): Pet {
         return petService.editPet(id,r.type, r.name, r.breed, r.color, r.age, r.sex, r.description, r.behaviour, r.image,
                 r.weight, r.height, r.allergies, r.vaccines, r.contact.email, r.contact.firstName, r.contact.lastName,

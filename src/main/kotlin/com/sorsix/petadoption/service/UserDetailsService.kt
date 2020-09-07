@@ -23,12 +23,18 @@ class UserDetailsService(private val userRepository: UserRepository,
         }
     }
 
-    fun register(username: String, password: String, email: String): User {
+    fun register(username: String, password: String, email: String, description: String?): User {
         if (userRepository.existsById(username))
             throw UsernameAlreadyExists(username)
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
-        val user = userRepository.save(User(username, password, role, email))
+        val user = userRepository.save(User(username, password, role, email, description))
         emailService.sendWelcomeEmail(user)
+//        try {
+//            emailService.sendWelcomeEmail(user)
+//        } catch (e: Exception) {
+//
+//            logger.info("Error Sending Email: " + e.message)
+//        }
         return user
     }
 
