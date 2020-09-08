@@ -12,7 +12,7 @@ data class User(
         val username: String,
 
         //@JsonIgnore
-        val password: String,
+        var password: String,
 
         @ManyToOne
         val userRole: UserRole,

@@ -2,6 +2,7 @@ package com.sorsix.petadoption.service
 
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.UserRole
+import com.sorsix.petadoption.domain.exception.InvalidUserIdException
 import com.sorsix.petadoption.domain.exception.RoleNotFoundException
 import com.sorsix.petadoption.domain.exception.UsernameAlreadyExists
 import com.sorsix.petadoption.repository.UserRepository
@@ -36,6 +37,12 @@ class UserDetailsService(private val userRepository: UserRepository,
 //            logger.info("Error Sending Email: " + e.message)
 //        }
         return user
+    }
+
+    fun changePassword(username: String, newPassword: String) {
+        val user = userRepository.findById(username).orElseThrow { InvalidUserIdException() }
+        user.password = newPassword
+        userRepository.save(user)
     }
 
     @PostConstruct

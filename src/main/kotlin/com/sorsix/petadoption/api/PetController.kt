@@ -28,8 +28,6 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     @GetMapping("/search")
     fun searchPets(name: String?, type: String?, breed: String?, age: Age?,
                    sex: Sex?, color: String?, page: Int?, size: Int?): Page<Pet> {
-//        if(page!=null)
-//             return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page-1, size)
         return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page, size)
     }
 
@@ -39,7 +37,7 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     }
 
     @DeleteMapping("/{id}")
-    fun deletePet(@PathVariable id: Long){
+    fun deletePet(@PathVariable id: Long) {
         return petService.deletePet(id)
     }
 
@@ -54,7 +52,7 @@ class PetController(val petSearchService: PetSearchByFiltersService,
 
     @PutMapping("/edit/{id}")
     fun editPet(@PathVariable id: Long, @RequestBody r: CreatePetRequest): Pet {
-        return petService.editPet(id,r.type, r.name, r.breed, r.color, r.age, r.sex, r.description, r.behaviour, r.image,
+        return petService.editPet(id, r.type, r.name, r.breed, r.color, r.age, r.sex, r.description, r.behaviour, r.image,
                 r.weight, r.height, r.allergies, r.vaccines, r.contact.email, r.contact.firstName, r.contact.lastName,
                 r.contact.address, r.contact.city, r.contact.telephone)
     }
@@ -70,7 +68,7 @@ class PetController(val petSearchService: PetSearchByFiltersService,
     }
 
     @ExceptionHandler(UnauthorizedException::class)
-    fun unauthorizedExceptionHandler(e:UnauthorizedException): ResponseEntity<Map<String, String>> {
+    fun unauthorizedExceptionHandler(e: UnauthorizedException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "You are not allowed"))
     }
 }

@@ -2,6 +2,7 @@ package com.sorsix.petadoption.service
 
 import com.sorsix.petadoption.api.dto.SignUpRequest
 import com.sorsix.petadoption.domain.User
+import com.sorsix.petadoption.domain.exception.PasswordsNotTheSameException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -19,4 +20,9 @@ class AuthService(val userDetailsService: UserDetailsService,
                 signUpRequest.email, signUpRequest.description)
     }
 
+    fun changePassword(oldPassword: String, newPassword: String) {
+        if (!passwordEncoder.matches(oldPassword, userDetailsService.loadUserByUsername(getCurrentUserId()).password))
+            throw PasswordsNotTheSameException()
+        userDetailsService.changePassword(getCurrentUserId(), passwordEncoder.encode(newPassword))
+    }
 }
