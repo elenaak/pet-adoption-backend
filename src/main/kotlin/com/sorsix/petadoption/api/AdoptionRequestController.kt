@@ -1,6 +1,5 @@
 package com.sorsix.petadoption.api
 
-import com.sorsix.petadoption.domain.AdoptionRequest
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.service.AdoptionRequestService
 import org.springframework.web.bind.annotation.*

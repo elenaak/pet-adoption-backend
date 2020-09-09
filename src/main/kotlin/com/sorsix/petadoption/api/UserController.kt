@@ -5,13 +5,8 @@ import com.sorsix.petadoption.api.dto.EditUserRequest
 import com.sorsix.petadoption.api.dto.SignUpRequest
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
-import com.sorsix.petadoption.domain.exception.InvalidUserIdException
-import com.sorsix.petadoption.domain.exception.PasswordsNotTheSameException
-import com.sorsix.petadoption.domain.exception.UsernameAlreadyExists
 import com.sorsix.petadoption.service.AuthService
 import com.sorsix.petadoption.service.UserService
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -44,18 +39,4 @@ class UserController(val authService: AuthService, val userService: UserService)
         return userService.getPetsByUser()
     }
 
-    @ExceptionHandler(UsernameAlreadyExists::class)
-    fun usernameExistsHandler(e: UsernameAlreadyExists): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.badRequest().body(mapOf("error" to e.toString()))
-    }
-
-    @ExceptionHandler(InvalidUserIdException::class)
-    fun usernameNotExistsHandler(e: InvalidUserIdException): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Username not found"))
-    }
-
-    @ExceptionHandler(PasswordsNotTheSameException::class)
-    fun passwordsNotSame(): ResponseEntity<Map<String, String>> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("error" to "Old password is not correct"))
-    }
 }
