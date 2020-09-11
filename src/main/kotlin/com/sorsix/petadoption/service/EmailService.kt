@@ -1,6 +1,7 @@
 package com.sorsix.petadoption.service
 
 import com.sorsix.petadoption.domain.Contact
+import com.sorsix.petadoption.domain.PasswordResetToken
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import org.springframework.core.io.FileSystemResource
@@ -38,7 +39,7 @@ class EmailService(val mailSender: JavaMailSender) {
     }
 
     @Async
-    fun sendWelcomeEmail(receiver:User){
+    fun sendWelcomeEmail(receiver: User) {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
         helper.setTo(InternetAddress(receiver.email))
@@ -49,7 +50,8 @@ class EmailService(val mailSender: JavaMailSender) {
         helper.addInline("logo", logo)
         mailSender.send(message)
     }
-    private fun createWelcomeMessage(username:String): String {
+
+    private fun createWelcomeMessage(username: String): String {
         val message = StringBuilder()
         message.append("Dear ").append(username).append(" ").append("\n")
                 .append("Thanks for joining PetFriends! ").append(".\n")
@@ -59,4 +61,31 @@ class EmailService(val mailSender: JavaMailSender) {
                 .append("Warm regards from team of PetFriends")
         return message.toString()
     }
+
+    @Async
+    fun sendPasswordResetEmail(passwordResetToken: PasswordResetToken) {
+        val message = mailSender.createMimeMessage()
+        val helper = MimeMessageHelper(message, true)
+        helper.setTo(InternetAddress(passwordResetToken.user.email))
+        helper.setSubject("Reset your password")
+        helper.setFrom("petfriendsmk@gmail.com")
+        helper.setText(createPasswordResetMessage(passwordResetToken), false)
+        val logo = FileSystemResource(File("static/logosmall.png"))
+        helper.addInline("logo", logo)
+        mailSender.send(message)
+    }
+
+    private fun createPasswordResetMessage(passwordResetToken: PasswordResetToken): String {
+        val message = StringBuilder()
+        message.append("Dear ").append(passwordResetToken.user.username).append("\n")
+                .append("Need to reset your password? No problem!")
+                .append(" Just click the link below and you'll be on your way.")
+                .append(" If you did not make this request, please ignore the email.").append("\n")
+                .append("Link to reset your password:").append("\n")
+                .append("http://localhost:4200/login/forgot-password/reset?token=")
+                .append(passwordResetToken.token)
+
+        return message.toString()
+    }
+
 }
