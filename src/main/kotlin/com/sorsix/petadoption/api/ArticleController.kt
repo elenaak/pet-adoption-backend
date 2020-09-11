@@ -17,11 +17,6 @@ class ArticleController(val articleService: ArticleService) {
         return articleService.createArticle(request)
     }
 
-    @GetMapping
-    fun getAll(): List<Article> {
-        return articleService.getAll()
-    }
-
     @GetMapping("/search")
     fun getAllByTheme(@RequestParam theme: String, @RequestParam page: Int, @RequestParam size: Int): Page<Article> {
         return articleService.getAllByTheme(theme, page, size)
