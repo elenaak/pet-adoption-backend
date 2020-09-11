@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.service
 
+import com.sorsix.petadoption.domain.Article
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidUserIdException
@@ -28,4 +29,9 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
         user.description = desc;
         userRepository.save(user)
     }
+
+    fun saveUser(u: User){
+        userRepository.save(u)
+    }
+
 }

@@ -10,7 +10,6 @@ import com.sorsix.petadoption.service.UserService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@CrossOrigin
 @RequestMapping
 class UserController(val authService: AuthService, val userService: UserService) {
 

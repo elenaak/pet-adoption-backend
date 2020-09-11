@@ -1,7 +1,6 @@
 package com.sorsix.petadoption.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
 
 
@@ -29,12 +28,20 @@ data class User(
     @JsonIgnore
     val pets: MutableSet<Pet> = HashSet()
 
+    @OneToMany(
+            mappedBy = "author")
+    @JsonIgnore
+    val articles: MutableSet<Article> = HashSet()
+    fun addArticle(article: Article) {
+        articles.add(article)
+    }
+
     @ManyToMany
     @JoinTable(
             name = "user_favorites",
             joinColumns = [JoinColumn(name = "user_id")],
             inverseJoinColumns = [JoinColumn(name = "pet_id")])
-    @JsonIgnore()
+    @JsonIgnore
     var favoritePets: MutableSet<Pet> = HashSet()
 
     fun addToFavourite(pet: Pet) {
