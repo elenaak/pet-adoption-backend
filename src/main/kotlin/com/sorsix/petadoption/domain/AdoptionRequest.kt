@@ -11,9 +11,6 @@ data class AdoptionRequest(
         val id: Long,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        val owner: User,
-
-        @ManyToOne(fetch = FetchType.LAZY)
         val adopter: User,
 
         @ManyToOne(fetch = FetchType.LAZY)

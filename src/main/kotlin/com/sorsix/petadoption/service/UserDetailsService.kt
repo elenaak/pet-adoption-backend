@@ -9,8 +9,10 @@ import com.sorsix.petadoption.repository.UserRoleRepository
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class UserDetailsService(private val userRepository: UserRepository,
                          private val roleRepository: UserRoleRepository,
                          private val emailService: EmailService) : UserDetailsService {
@@ -28,12 +30,6 @@ class UserDetailsService(private val userRepository: UserRepository,
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
         val user = userRepository.save(User(username, password, role, email, description))
         emailService.sendWelcomeEmail(user)
-//        try {
-//            emailService.sendWelcomeEmail(user)
-//        } catch (e: Exception) {
-//
-//            logger.info("Error Sending Email: " + e.message)
-//        }
         return user
     }
 
@@ -49,6 +45,5 @@ class UserDetailsService(private val userRepository: UserRepository,
         user.password = newPassword
         userRepository.save(user)
     }
-
 
 }

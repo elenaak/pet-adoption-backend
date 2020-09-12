@@ -3,13 +3,11 @@ package com.sorsix.petadoption.config
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.boot.json.GsonJsonParser
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
 import java.util.*
@@ -19,9 +17,8 @@ import javax.servlet.http.HttpServletResponse
 
 
 class JWTAuthenticationFilter(
-        val authenticationMng: AuthenticationManager,
-        val userDetailsService: UserDetailsService,
-        val passwordEncoder: PasswordEncoder
+        private val authenticationMng: AuthenticationManager,
+        private val userDetailsService: UserDetailsService
 ) : UsernamePasswordAuthenticationFilter() {
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {

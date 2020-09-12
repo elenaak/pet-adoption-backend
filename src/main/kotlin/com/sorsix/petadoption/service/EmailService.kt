@@ -16,7 +16,7 @@ import javax.mail.internet.InternetAddress
 class EmailService(val mailSender: JavaMailSender) {
 
     @Async
-    fun sendEmail(pet: Pet, receiver: Contact, adopter: User) {
+    fun sendEmailToOwner(pet: Pet, receiver: Contact, adopter: User) {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
         helper.setTo(InternetAddress(receiver.email))

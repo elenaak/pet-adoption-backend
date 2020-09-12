@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JWTAuthorizationFilter(private val userDetailsService: UserDetailsService,
-                             private val authenticationMng: AuthenticationManager) : BasicAuthenticationFilter(authenticationMng) {
+                             private val authenticationMng: AuthenticationManager)
+    : BasicAuthenticationFilter(authenticationMng) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val header: String? = request.getHeader(SecurityConstants.HEADER_STRING)

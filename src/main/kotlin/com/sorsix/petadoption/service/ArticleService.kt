@@ -27,10 +27,6 @@ class ArticleService(val articleRepository: ArticleRepository,
         return articleRepository.findById(id).orElseThrow { InvalidArticleIdException() }
     }
 
-    fun getAll(): List<Article> {
-        return articleRepository.findAll();
-    }
-
     fun getAllByTheme(theme: String, page: Int, size: Int): Page<Article> {
         return articleRepository.getAllByThemeOrderByDateDesc(theme.toLowerCase(), PageRequest.of(page, size))
     }

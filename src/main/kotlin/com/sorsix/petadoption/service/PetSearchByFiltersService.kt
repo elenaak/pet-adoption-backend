@@ -14,7 +14,7 @@ class PetSearchByFiltersService(val petRepository: PetRepository) {
     fun getPetsUsingFilters(name: String?, type: String?, breed: String?, age: Age?, sex: Sex?, color: String?,
                             page: Int?, size: Int?): Page<Pet> {
         val p = page ?: 0
-        val s = size ?: 2
+        val s = size ?: 10
         return petRepository.findByFilters(name, type, breed, age, sex, color, PageRequest.of(p, s))
     }
 }

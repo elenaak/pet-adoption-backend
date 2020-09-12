@@ -1,7 +1,6 @@
 package com.sorsix.petadoption.api
 
 import com.sorsix.petadoption.api.dto.*
-import com.sorsix.petadoption.domain.PasswordResetToken
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.service.AuthService
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping
+@CrossOrigin
 class UserController(val authService: AuthService,
                      val userService: UserService,
                      val passwordResetService: PasswordResetService) {
@@ -51,14 +51,14 @@ class UserController(val authService: AuthService,
     }
 
     @PostMapping("/login/forgot-password/reset")
-    fun resetPassword(@RequestBody request: ResetPasswordRequest):ResponseEntity<Boolean> {
-        return passwordResetService.resetPassword(request.password,request.token).map { response ->
+    fun resetPassword(@RequestBody request: ResetPasswordRequest): ResponseEntity<Boolean> {
+        return passwordResetService.resetPassword(request.password, request.token).map { response ->
             ResponseEntity.ok(response)
         }.orElse(ResponseEntity.notFound().build())
     }
 
     @GetMapping("/api/my-pets")
-    fun getPetsByUser(): Set<Pet> {
+    fun getPetsByUser(): List<Pet> {
         return userService.getPetsByUser()
     }
 }

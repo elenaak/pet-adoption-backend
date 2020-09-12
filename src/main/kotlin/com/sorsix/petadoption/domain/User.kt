@@ -10,7 +10,7 @@ data class User(
         @Id
         val username: String,
 
-        //@JsonIgnore
+        @JsonIgnore
         var password: String,
 
         @ManyToOne
@@ -26,12 +26,13 @@ data class User(
     @OneToMany(
             mappedBy = "owner")
     @JsonIgnore
-    val pets: MutableSet<Pet> = HashSet()
+    val pets: MutableList<Pet> = ArrayList()
 
     @OneToMany(
             mappedBy = "author")
     @JsonIgnore
     val articles: MutableSet<Article> = HashSet()
+
     fun addArticle(article: Article) {
         articles.add(article)
     }
@@ -42,7 +43,7 @@ data class User(
             joinColumns = [JoinColumn(name = "user_id")],
             inverseJoinColumns = [JoinColumn(name = "pet_id")])
     @JsonIgnore
-    var favoritePets: MutableSet<Pet> = HashSet()
+    var favoritePets: MutableList<Pet> = ArrayList()
 
     fun addToFavourite(pet: Pet) {
         favoritePets.add(pet)

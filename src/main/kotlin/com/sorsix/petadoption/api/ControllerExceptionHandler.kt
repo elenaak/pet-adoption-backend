@@ -29,6 +29,11 @@ class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Pet id not found"))
     }
 
+    @ExceptionHandler(InvalidArticleIdException::class)
+    fun petIdNotExistsHandler(e: InvalidArticleIdException): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Article id not found"))
+    }
+
     @ExceptionHandler(UnauthorizedException::class)
     fun unauthorizedExceptionHandler(e: UnauthorizedException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(mapOf("error" to "You are not allowed"))

@@ -3,25 +3,23 @@ package com.sorsix.petadoption.service
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidPetIdException
-import com.sorsix.petadoption.domain.exception.InvalidUserIdException
 import com.sorsix.petadoption.repository.PetRepository
-import com.sorsix.petadoption.repository.UserRepository
 import org.springframework.stereotype.Service
 
 @Service
 class FavouritePetService(val authService: AuthService,
                           val petRepository: PetRepository,
-                          val userRepository: UserRepository) {
+                          val userService: UserService) {
 
     fun addOrDeletePetFromFavourite(petId: Long) {
         val pet = petRepository.findById(petId).orElseThrow { throw InvalidPetIdException() }
-        val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow { throw InvalidUserIdException() }
+        val user = userService.getUserById(authService.getCurrentUserId())
         if (user.favoritePets.contains(pet))
             deleteFromFavourite(user, pet)
         else
             addToFavourite(user, pet)
         petRepository.save(pet)
-        userRepository.save(user)
+        userService.saveUser(user)
     }
 
     private fun addToFavourite(user: User, pet: Pet) {
@@ -34,8 +32,8 @@ class FavouritePetService(val authService: AuthService,
         pet.unlike(user)
     }
 
-    fun getLikedPets(): Set<Pet> {
-        val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow { throw InvalidUserIdException() }
+    fun getLikedPets(): List<Pet> {
+        val user = userService.getUserById(authService.getCurrentUserId())
         return user.favoritePets
     }
 

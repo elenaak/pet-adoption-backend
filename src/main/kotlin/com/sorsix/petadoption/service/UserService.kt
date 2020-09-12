@@ -1,6 +1,5 @@
 package com.sorsix.petadoption.service
 
-import com.sorsix.petadoption.domain.Article
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidUserIdException
@@ -14,7 +13,7 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
         return userRepository.findById(username).orElseThrow { throw InvalidUserIdException() }
     }
 
-    fun getPetsByUser(): Set<Pet> {
+    fun getPetsByUser(): List<Pet> {
         val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow {
             throw InvalidUserIdException()
         }
@@ -26,12 +25,16 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
             throw InvalidUserIdException()
         }
         user.email = email
-        user.description = desc;
+        user.description = desc
         userRepository.save(user)
     }
 
-    fun saveUser(u: User){
+    fun saveUser(u: User) {
         userRepository.save(u)
+    }
+
+    fun findAll(): MutableList<User> {
+        return userRepository.findAll()
     }
 
 }
