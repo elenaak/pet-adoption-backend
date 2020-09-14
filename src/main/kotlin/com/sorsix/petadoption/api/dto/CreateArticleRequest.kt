@@ -5,4 +5,5 @@ data class CreateArticleRequest(
         val description: String,
         val content: String,
         val image: String?,
-        val theme: String)
+        val theme: String
+)

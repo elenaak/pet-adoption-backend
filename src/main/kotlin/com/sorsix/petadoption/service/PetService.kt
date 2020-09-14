@@ -31,9 +31,9 @@ class PetService(val petRepository: PetRepository,
                   allergies: String, vaccination: String,
                   email: String, firstName: String, lastName: String, address: String, city: String,
                   telephone: String): Pet {
-        val contact = contactService.createContact(email, name, lastName, address, city, telephone)
+        val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)
         val user = userService.getUserById(authService.getCurrentUserId())
-        return petRepository.save(Pet(0, type, user, contact, firstName, breed, color, age, sex, description,
+        return petRepository.save(Pet(0, type, user, contact, name, breed, color, age, sex, description,
                 behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now()))
     }
 
@@ -63,8 +63,8 @@ class PetService(val petRepository: PetRepository,
             val user = userService.getUserById(authService.getCurrentUserId())
             if (user.username != it.owner.username)
                 throw UnauthorizedException()
-            val contact = contactService.createContact(email, name, lastName, address, city, telephone)
-            val updated = Pet(id, type, user, contact, firstName, breed, color, age, sex, description,
+            val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)
+            val updated = Pet(id, type, user, contact, name, breed, color, age, sex, description,
                     behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now())
             petRepository.save(updated)
             updated

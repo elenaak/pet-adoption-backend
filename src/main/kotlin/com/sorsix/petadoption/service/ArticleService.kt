@@ -18,8 +18,6 @@ class ArticleService(val articleRepository: ArticleRepository,
         val author = userService.getUserById(authService.getCurrentUserId())
         val article = Article(0, request.title, request.description, request.content, request.image,
                 request.theme.toLowerCase(), author, LocalDateTime.now())
-        author.addArticle(article)
-        userService.saveUser(author)
         return articleRepository.save(article)
     }
 

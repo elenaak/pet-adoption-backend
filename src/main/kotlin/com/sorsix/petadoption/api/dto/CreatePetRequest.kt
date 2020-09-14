@@ -5,7 +5,6 @@ import com.sorsix.petadoption.domain.Contact
 import com.sorsix.petadoption.domain.Sex
 
 data class CreatePetRequest(
-        val contact: Contact,
         val type: String,
         val name: String,
         val breed: String,
@@ -19,5 +18,5 @@ data class CreatePetRequest(
         val height: Double,
         val allergies: String,
         val vaccines: String,
-        val neutered: Boolean
+        val contact: Contact
 )

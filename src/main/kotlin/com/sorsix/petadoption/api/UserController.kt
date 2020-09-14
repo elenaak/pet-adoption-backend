@@ -1,12 +1,14 @@
 package com.sorsix.petadoption.api
 
 import com.sorsix.petadoption.api.dto.*
+import com.sorsix.petadoption.domain.Article
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.service.AuthService
 import com.sorsix.petadoption.service.PasswordResetService
 import com.sorsix.petadoption.service.UserService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -60,5 +62,11 @@ class UserController(val authService: AuthService,
     @GetMapping("/api/my-pets")
     fun getPetsByUser(): List<Pet> {
         return userService.getPetsByUser()
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/api/my-articles")
+    fun getArticlesByUser(): List<Article> {
+        return userService.getArticlesByAuthor()
     }
 }

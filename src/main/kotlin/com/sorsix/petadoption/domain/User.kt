@@ -33,10 +33,6 @@ data class User(
     @JsonIgnore
     val articles: MutableSet<Article> = HashSet()
 
-    fun addArticle(article: Article) {
-        articles.add(article)
-    }
-
     @ManyToMany
     @JoinTable(
             name = "user_favorites",

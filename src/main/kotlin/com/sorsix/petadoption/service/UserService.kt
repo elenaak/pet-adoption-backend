@@ -1,5 +1,6 @@
 package com.sorsix.petadoption.service
 
+import com.sorsix.petadoption.domain.Article
 import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidUserIdException
@@ -18,6 +19,11 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
             throw InvalidUserIdException()
         }
         return user.pets
+    }
+
+    fun getArticlesByAuthor(): List<Article> {
+        val user = getUserById(authService.getCurrentUserId())
+        return user.articles.sortedByDescending { a -> a.date }
     }
 
     fun editUser(email: String, desc: String?) {
