@@ -48,4 +48,10 @@ data class User(
     fun deleteFromFavourite(pet: Pet) {
         favoritePets.remove(pet)
     }
+
+    override fun toString(): String {
+        return "User(username='$username', userRole=$userRole, email='$email', description=$description)"
+    }
+
+
 }

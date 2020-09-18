@@ -16,13 +16,15 @@ class PetController(val petSearchService: PetSearchByFiltersService,
                     val petService: PetService) {
 
     @GetMapping
-    fun getAll(@RequestParam page: Int?, @RequestParam size: Int?): Page<Pet> {
+    fun getAll(@RequestParam(required = false) page: Int?, @RequestParam(required = false) size: Int?): Page<Pet> {
         return petService.findAll(page, size)
     }
 
     @GetMapping("/search")
-    fun searchPets(name: String?, type: String?, breed: String?, age: Age?,
-                   sex: Sex?, color: String?, page: Int?, size: Int?): Page<Pet> {
+    fun searchPets(@RequestParam(required = false) name: String?, @RequestParam(required = false) type: String?,
+                   @RequestParam(required = false) breed: String?, @RequestParam(required = false) age: Age?,
+                   @RequestParam(required = false) sex: Sex?, @RequestParam(required = false) color: String?,
+                   @RequestParam(required = false) page: Int?, @RequestParam(required = false) size: Int?): Page<Pet> {
         return petSearchService.getPetsUsingFilters(name, type, breed, age, sex, color, page, size)
     }
 

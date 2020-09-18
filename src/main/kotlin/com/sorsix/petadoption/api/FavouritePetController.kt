@@ -18,7 +18,7 @@ class FavouritePetController(val favouritePetService: FavouritePetService) {
     }
 
     @GetMapping
-    fun likedBy(): List<Pet> {
+    fun likedByUser(): List<Pet> {
         return favouritePetService.getLikedPets()
     }
 }

@@ -6,6 +6,8 @@ import com.sorsix.petadoption.domain.exception.RoleNotFoundException
 import com.sorsix.petadoption.domain.exception.UsernameAlreadyExists
 import com.sorsix.petadoption.repository.UserRepository
 import com.sorsix.petadoption.repository.UserRoleRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional
 class UserDetailsService(private val userRepository: UserRepository,
                          private val roleRepository: UserRoleRepository,
                          private val emailService: EmailService) : UserDetailsService {
+
+    val logger: Logger = LoggerFactory.getLogger(com.sorsix.petadoption.service.UserDetailsService::class.java)
 
     override fun loadUserByUsername(username: String): com.sorsix.petadoption.domain.UserDetails {
         val user = userRepository.findById(username)
@@ -29,7 +33,12 @@ class UserDetailsService(private val userRepository: UserRepository,
             throw UsernameAlreadyExists(username)
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
         val user = userRepository.save(User(username, password, role, email, description))
-        emailService.sendWelcomeEmail(user)
+        try {
+            emailService.sendWelcomeEmail(user)
+        } catch (e: Exception) {
+            logger.warn("Welcome email could not be sent to email [{}]", email)
+        }
+        logger.info("Saving user [{}]", user)
         return user
     }
 
@@ -37,7 +46,9 @@ class UserDetailsService(private val userRepository: UserRepository,
         if (userRepository.existsById(username))
             throw UsernameAlreadyExists(username)
         val role = roleRepository.findById("ROLE_ADMIN").orElseThrow { throw RoleNotFoundException() }
-        return userRepository.save(User(username, password, role, email, description))
+        val admin = User(username, password, role, email, description)
+        logger.info("Saving admin [{}]", admin)
+        return userRepository.save(admin)
     }
 
     fun changePassword(username: String, newPassword: String) {

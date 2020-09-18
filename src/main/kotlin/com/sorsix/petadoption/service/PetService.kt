@@ -7,6 +7,8 @@ import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidPetIdException
 import com.sorsix.petadoption.domain.exception.UnauthorizedException
 import com.sorsix.petadoption.repository.PetRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -18,6 +20,8 @@ class PetService(val petRepository: PetRepository,
                  val contactService: ContactService,
                  val userService: UserService,
                  val authService: AuthService) {
+
+    val logger: Logger = LoggerFactory.getLogger(PetService::class.java)
 
     fun findAll(page: Int?, size: Int?): Page<Pet> {
         val p = page ?: 0
@@ -33,8 +37,10 @@ class PetService(val petRepository: PetRepository,
                   telephone: String): Pet {
         val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)
         val user = userService.getUserById(authService.getCurrentUserId())
-        return petRepository.save(Pet(0, type, user, contact, name, breed, color, age, sex, description,
-                behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now()))
+        val pet = Pet(0, type, user, contact, name, breed, color, age, sex, description,
+                behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now())
+        logger.info("Saving pet [{}]", pet)
+        return petRepository.save(pet)
     }
 
     fun deletePet(id: Long) {
@@ -46,8 +52,12 @@ class PetService(val petRepository: PetRepository,
                 u.deleteFromFavourite(it)
                 u.pets.remove(it)
             }
+            logger.info("Deleting pet [{}]", it)
             petRepository.delete(it)
-        }.orElseThrow { throw InvalidPetIdException() }
+        }.orElseThrow {
+            logger.error("Invalid pet id [{}]", id)
+            throw InvalidPetIdException()
+        }
     }
 
     fun getPetById(id: Long): Pet {
@@ -66,9 +76,13 @@ class PetService(val petRepository: PetRepository,
             val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)
             val updated = Pet(id, type, user, contact, name, breed, color, age, sex, description,
                     behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now())
+            logger.info("Updating pet with id [{}]", id)
             petRepository.save(updated)
             updated
-        }.orElseThrow { throw InvalidPetIdException() }
+        }.orElseThrow {
+            logger.error("Invalid pet id [{}]", id)
+            throw InvalidPetIdException()
+        }
     }
 
 }

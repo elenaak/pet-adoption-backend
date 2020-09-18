@@ -62,4 +62,12 @@ data class Pet(
     fun unlike(user: User) {
         likes.remove(user)
     }
+
+    override fun toString(): String {
+        return "Pet(id=$id, type='$type', name='$name', breed='$breed', color='$color', age=$age, sex=$sex, " +
+                "behaviour='$behaviour', weight=$weight, height=$height, allergies='$allergies', " +
+                "vaccination='$vaccination', timestamp=$timestamp)"
+    }
+
+
 }

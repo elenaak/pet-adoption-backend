@@ -84,7 +84,6 @@ class EmailService(val mailSender: JavaMailSender) {
                 .append("Link to reset your password:").append("\n")
                 .append("http://localhost:4200/login/forgot-password/reset?token=")
                 .append(passwordResetToken.token)
-
         return message.toString()
     }
 

@@ -27,4 +27,9 @@ data class Article(
 
         val date: LocalDateTime
 
-)
+) {
+    override fun toString(): String {
+        return "Article(id=$id, title='$title', description='$description', theme='$theme', " +
+                "author=$author, date=$date)"
+    }
+}

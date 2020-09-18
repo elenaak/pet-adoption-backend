@@ -5,10 +5,14 @@ import com.sorsix.petadoption.domain.Pet
 import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.domain.exception.InvalidUserIdException
 import com.sorsix.petadoption.repository.UserRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UserService(val userRepository: UserRepository, val authService: AuthService) {
+
+    val logger: Logger = LoggerFactory.getLogger(UserService::class.java)
 
     fun getUserById(username: String): User {
         return userRepository.findById(username).orElseThrow { throw InvalidUserIdException() }
@@ -32,6 +36,7 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
         }
         user.email = email
         user.description = desc
+        logger.info("Updating user with username [{}]", user.username)
         userRepository.save(user)
     }
 
