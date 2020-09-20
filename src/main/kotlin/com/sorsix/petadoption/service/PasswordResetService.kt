@@ -1,6 +1,9 @@
 package com.sorsix.petadoption.service
 
 import com.sorsix.petadoption.domain.PasswordResetToken
+import com.sorsix.petadoption.domain.exception.InvalidTokenException
+import com.sorsix.petadoption.domain.exception.InvalidUserIdException
+import com.sorsix.petadoption.domain.exception.TokenExpiredException
 import com.sorsix.petadoption.repository.PasswordTokenRepository
 import com.sorsix.petadoption.repository.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -17,43 +20,42 @@ class PasswordResetService(private val userRepository: UserRepository,
                            val passwordEncoder: BCryptPasswordEncoder) {
 
 
-    fun resetPasswordViaEmail(email: String): Optional<Boolean> {
-        val user = userRepository.findUserByEmail(email);
-        if (user.isEmpty) {
-            return Optional.ofNullable(false)
+    fun resetPasswordViaEmail(email: String): Boolean {
+        val user = userRepository.findUserByEmail(email)
+        return user.map {
+            val token = UUID.randomUUID().toString()
+            val dateTime = LocalDateTime.now()
+            val passwordResetToken = PasswordResetToken(token, user.get(), dateTime)
+            passwordTokenRepository.save(passwordResetToken)
+            emailService.sendPasswordResetEmail(passwordResetToken)
+            true
+        }.orElseThrow {
+            InvalidUserIdException()
         }
-        val token = UUID.randomUUID().toString()
-        val dateTime = LocalDateTime.now()
-        val passwordResetToken = PasswordResetToken(token, user.get(), dateTime)
-        passwordTokenRepository.save(passwordResetToken)
-        emailService.sendPasswordResetEmail(passwordResetToken)
-
-
-        return Optional.of(true)
     }
 
-    fun validateToken(token: String): Optional<Boolean> {
-        //TODO CHECK TIMESTAMP
+    fun validateToken(token: String): Boolean {
         val userToken = passwordTokenRepository.findById(token)
-        if (userToken.isEmpty) {
-            return Optional.of(false)
+        return userToken.map {
+            val currentDateTime = LocalDateTime.now()
+            val minutes = ChronoUnit.MINUTES.between(userToken.get().timestamp, currentDateTime)
+            if (minutes > 60) {
+                passwordTokenRepository.delete(userToken.get())
+                throw TokenExpiredException()
+            }
+            true
+        }.orElseThrow {
+            InvalidTokenException()
         }
-        val currentDateTime = LocalDateTime.now()
-        val minutes = ChronoUnit.MINUTES.between(userToken.get().timestamp, currentDateTime)
-        if (minutes > 60) {
-            passwordTokenRepository.delete(userToken.get())
-            return Optional.of(false)
-        }
-        return Optional.of(true)
     }
 
-    fun resetPassword(password: String, token: String): Optional<Boolean> {
+    fun resetPassword(password: String, token: String): Boolean {
         val userToken = passwordTokenRepository.findById(token)
-        val user = userRepository.findById(userToken.get().user.username).get()
+        val user = userRepository.findById(userToken.get().user.username).orElseThrow { throw InvalidUserIdException() }
         user.password = passwordEncoder.encode(password)
         userRepository.save(user)
         passwordTokenRepository.delete(userToken.get())
-        return Optional.of(true)
+        return true
     }
 
 

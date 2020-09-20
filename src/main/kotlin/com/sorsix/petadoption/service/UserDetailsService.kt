@@ -33,11 +33,7 @@ class UserDetailsService(private val userRepository: UserRepository,
             throw UsernameAlreadyExists(username)
         val role = roleRepository.findById("ROLE_USER").orElseThrow { throw RoleNotFoundException() }
         val user = userRepository.save(User(username, password, role, email, description))
-        try {
-            emailService.sendWelcomeEmail(user)
-        } catch (e: Exception) {
-            logger.warn("Welcome email could not be sent to email [{}]", email)
-        }
+        emailService.sendWelcomeEmail(user)
         logger.info("Saving user [{}]", user)
         return user
     }
@@ -51,10 +47,11 @@ class UserDetailsService(private val userRepository: UserRepository,
         return userRepository.save(admin)
     }
 
-    fun changePassword(username: String, newPassword: String) {
+    fun changePassword(username: String, newPassword: String): User {
         val user = userRepository.findById(username).orElseThrow { InvalidUserIdException() }
         user.password = newPassword
         userRepository.save(user)
+        return user
     }
 
 }

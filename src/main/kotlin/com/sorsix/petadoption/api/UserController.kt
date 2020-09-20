@@ -7,7 +7,6 @@ import com.sorsix.petadoption.domain.User
 import com.sorsix.petadoption.service.AuthService
 import com.sorsix.petadoption.service.PasswordResetService
 import com.sorsix.petadoption.service.UserService
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
@@ -39,24 +38,18 @@ class UserController(val authService: AuthService,
     }
 
     @PostMapping("/login/forgot-password")
-    fun forgotPassword(@RequestBody request: EmailPasswordResetRequest): ResponseEntity<Boolean> {
-        return passwordResetService.resetPasswordViaEmail(request.email).map { response ->
-            ResponseEntity.ok(response)
-        }.orElse(ResponseEntity.notFound().build())
+    fun forgotPassword(@RequestBody request: EmailPasswordResetRequest): Boolean {
+        return passwordResetService.resetPasswordViaEmail(request.email)
     }
 
     @PostMapping("/login/forgot-password/validate")
-    fun validateResetPasswordToken(@RequestBody request: TokenValidationRequest): ResponseEntity<Boolean> {
-        return passwordResetService.validateToken(request.token).map { response ->
-            ResponseEntity.ok(response)
-        }.orElse(ResponseEntity.notFound().build())
+    fun validateResetPasswordToken(@RequestBody request: TokenValidationRequest): Boolean {
+        return passwordResetService.validateToken(request.token)
     }
 
     @PostMapping("/login/forgot-password/reset")
-    fun resetPassword(@RequestBody request: ResetPasswordRequest): ResponseEntity<Boolean> {
-        return passwordResetService.resetPassword(request.password, request.token).map { response ->
-            ResponseEntity.ok(response)
-        }.orElse(ResponseEntity.notFound().build())
+    fun resetPassword(@RequestBody request: ResetPasswordRequest): Boolean {
+        return passwordResetService.resetPassword(request.password, request.token)
     }
 
     @GetMapping("/api/my-pets")

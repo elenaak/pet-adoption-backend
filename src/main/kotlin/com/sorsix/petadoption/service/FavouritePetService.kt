@@ -7,13 +7,12 @@ import com.sorsix.petadoption.repository.PetRepository
 import org.springframework.stereotype.Service
 
 @Service
-class FavouritePetService(val authService: AuthService,
-                          val petRepository: PetRepository,
+class FavouritePetService(val petRepository: PetRepository,
                           val userService: UserService) {
 
     fun addOrDeletePetFromFavourite(petId: Long) {
         val pet = petRepository.findById(petId).orElseThrow { throw InvalidPetIdException() }
-        val user = userService.getUserById(authService.getCurrentUserId())
+        val user = userService.getCurrentUser()
         if (user.favoritePets.contains(pet))
             deleteFromFavourite(user, pet)
         else
@@ -33,7 +32,7 @@ class FavouritePetService(val authService: AuthService,
     }
 
     fun getLikedPets(): List<Pet> {
-        val user = userService.getUserById(authService.getCurrentUserId())
+        val user = userService.getCurrentUser()
         return user.favoritePets
     }
 

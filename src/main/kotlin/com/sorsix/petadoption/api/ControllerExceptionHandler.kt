@@ -30,7 +30,7 @@ class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(InvalidArticleIdException::class)
-    fun petIdNotExistsHandler(e: InvalidArticleIdException): ResponseEntity<Map<String, String>> {
+    fun articleIdNotExistsHandler(e: InvalidArticleIdException): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapOf("error" to "Article id not found"))
     }
 

@@ -11,7 +11,6 @@ import java.util.stream.Collectors
 
 @Service
 class AdoptionRequestService(val petService: PetService,
-                             val authService: AuthService,
                              val userService: UserService,
                              val repository: AdoptionRequestRepository,
                              val emailService: EmailService) {
@@ -21,12 +20,8 @@ class AdoptionRequestService(val petService: PetService,
     fun createAdoptionRequest(petId: Long): AdoptionRequest {
         val pet = petService.getPetById(petId)
         val receiver = pet.contact
-        val adopter = userService.getUserById(authService.getCurrentUserId())
-        try {
-            emailService.sendEmailToOwner(pet, receiver, adopter)
-        } catch (e: Exception) {
-            logger.warn("Email could not be sent to [{}]", receiver.email)
-        }
+        val adopter = userService.getCurrentUser()
+        emailService.sendEmailToOwner(pet, receiver, adopter)
         val request = AdoptionRequest(0, adopter, pet, LocalDateTime.now())
         logger.info("Saving adoption request [{}]", request)
         return repository.save(request)

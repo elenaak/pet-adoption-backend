@@ -18,8 +18,7 @@ import java.time.LocalDateTime
 @Service
 class PetService(val petRepository: PetRepository,
                  val contactService: ContactService,
-                 val userService: UserService,
-                 val authService: AuthService) {
+                 val userService: UserService) {
 
     val logger: Logger = LoggerFactory.getLogger(PetService::class.java)
 
@@ -36,7 +35,7 @@ class PetService(val petRepository: PetRepository,
                   email: String, firstName: String, lastName: String, address: String, city: String,
                   telephone: String): Pet {
         val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)
-        val user = userService.getUserById(authService.getCurrentUserId())
+        val user = userService.getCurrentUser()
         val pet = Pet(0, type, user, contact, name, breed, color, age, sex, description,
                 behaviour, image64Base, weight, height, allergies, vaccination, LocalDateTime.now())
         logger.info("Saving pet [{}]", pet)
@@ -45,7 +44,7 @@ class PetService(val petRepository: PetRepository,
 
     fun deletePet(id: Long) {
         return this.petRepository.findById(id).map {
-            val user = userService.getUserById(authService.getCurrentUserId())
+            val user = userService.getCurrentUser()
             if (user.username != it.owner.username)
                 throw UnauthorizedException()
             for (u: User in userService.findAll()) {
@@ -70,7 +69,7 @@ class PetService(val petRepository: PetRepository,
                 email: String, firstName: String, lastName: String, address: String, city: String,
                 telephone: String): Pet {
         return this.petRepository.findById(id).map {
-            val user = userService.getUserById(authService.getCurrentUserId())
+            val user = userService.getCurrentUser()
             if (user.username != it.owner.username)
                 throw UnauthorizedException()
             val contact = contactService.createContact(email, firstName, lastName, address, city, telephone)

@@ -18,22 +18,22 @@ class UserService(val userRepository: UserRepository, val authService: AuthServi
         return userRepository.findById(username).orElseThrow { throw InvalidUserIdException() }
     }
 
+    fun getCurrentUser(): User {
+        return getUserById(authService.getCurrentUserId())
+    }
+
     fun getPetsByUser(): List<Pet> {
-        val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow {
-            throw InvalidUserIdException()
-        }
+        val user = getCurrentUser()
         return user.pets
     }
 
     fun getArticlesByAuthor(): List<Article> {
-        val user = getUserById(authService.getCurrentUserId())
+        val user = getCurrentUser()
         return user.articles.sortedByDescending { a -> a.date }
     }
 
     fun editUser(email: String, desc: String?) {
-        val user = userRepository.findById(authService.getCurrentUserId()).orElseThrow {
-            throw InvalidUserIdException()
-        }
+        val user = getCurrentUser()
         user.email = email
         user.description = desc
         logger.info("Updating user with username [{}]", user.username)

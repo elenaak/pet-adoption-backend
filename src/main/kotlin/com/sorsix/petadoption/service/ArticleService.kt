@@ -13,13 +13,12 @@ import java.time.LocalDateTime
 
 @Service
 class ArticleService(val articleRepository: ArticleRepository,
-                     val authService: AuthService,
                      val userService: UserService) {
 
     val logger: Logger = LoggerFactory.getLogger(ArticleService::class.java)
 
     fun createArticle(request: CreateArticleRequest): Article {
-        val author = userService.getUserById(authService.getCurrentUserId())
+        val author = userService.getCurrentUser()
         val article = Article(0, request.title, request.description, request.content, request.image,
                 request.theme.toLowerCase(), author, LocalDateTime.now())
         logger.info("Saving article [{}]", article)
